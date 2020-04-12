@@ -1,30 +1,40 @@
 
 
 const display ={
-  title:"Intelligent Customer Management",
+  title:"智能客服助理",
   menu: {
-    left_menu_1: "Related Answers",
-    left_menu_2: "Top Questions",
-    left_menu_3: "Question Categories",
-    left_menu_4: "Continue to ask",
-    left_menu_5: "Very useful",
-    left_menu_6: "Transfer manual customer service"
+    left_menu_1: "相关答案",
+    left_menu_2: "热门问题",
+    left_menu_3: "问题分类",
+    left_menu_4: "继续提问",
+    left_menu_5: "非常有用",
+    left_menu_6: "转人工服务"
     },
   js_message: {
-    item_1: "I'm glad to serve you, have a good day",
-    item_2: "Failed to send, unable to get location",
-    item_3:"Send failed, browser does not support getting location",
-    item_4:"Good morning",
-    item_5:"Good Afternoon",
-    item_6:"Good Evening",
-    item_7:"Loding" 
+    item_1: "很高兴能帮到您，祝您生活愉快",
+    item_2: "获取位置信息失败",
+    item_3:"发送失败，浏览器未允许获取位置信息",
+    item_4:"早上好",
+    item_5:"下午好",
+    item_6:"晚上好",
+    item_7:"努力加载中" 
   },
   js_bot:{
       item_1:"You can use the manual service by clicking the 'Transfer manual customer service' button in the lower right corner.",
       item_2:"Sorry, due to your unusual number of recent requests, I am temporarily unable to serve you :(",
-      item_3:"Ask questions here...",
+      item_3:"在这里提问吧...",
       item_4:"Sorry, I can't understand your question for a while, can you try another way of asking questions~",
       item_5:"I can't understand your question for a while"
+  },
+  settings: {
+    "switch_manual":"Transfer manual / manual / transfer customer service / customer service / manual customer service / manual service",
+    "malicious_user_time":"120",
+    "hint":"You can enter keywords to ask questions, such as \"hello\", you can also choose from the following hot questions.",
+    "issues_number":"2",
+    "welcome_message":"我是智能客服助手，为您提供常见问题查询服务。",
+    "intent_fails_times":"1000",
+    "malicious_user_banned":"199",
+    "switch_manual_times":"1000"
   }
 }
 

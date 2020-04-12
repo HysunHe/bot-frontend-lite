@@ -61,16 +61,7 @@ class BotViewModel {
       }
     })(now)
 
-    self.settings = {
-      "switch_manual":"Transfer manual / manual / transfer customer service / customer service / manual customer service / manual service",
-      "malicious_user_time":"120",
-      "hint":"You can enter keywords to ask questions, such as \"hello\", you can also choose from the following hot questions.",
-      "issues_number":"2",
-      "welcome_message":"I am demo bot. Can I help you?",
-      "intent_fails_times":"1000",
-      "malicious_user_banned":"199",
-      "switch_manual_times":"1000"
-    };
+    self.settings = display.settings;
     
     ko.bindingHandlers.placeholder = {
       init: function (element, valueAccessor, allBindingsAccessor) {
@@ -81,6 +72,7 @@ class BotViewModel {
 
     self.placeholderText = ko.observable(display.js_message.item_7);
     self.removeAskFeedback = config.removeAskFeedback;
+    self.hideHint = config.hideHint;
     self.loading = ko.observable(false)
     self.blocked = ko.observable(false)
     self.askedTimes = ko.observable(0)
@@ -232,11 +224,6 @@ class BotViewModel {
     self.appendMessageNoWait = (message) => {
       addToMessageList(message);
       syncScrollDown()
-    }
-
-    self.sayHello = async () => {
-      self.sayHelloNoWait();
-      await deferedScrollDown();
     }
 
     self.sayHelloNoWait = () => {

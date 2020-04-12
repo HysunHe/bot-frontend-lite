@@ -3,7 +3,8 @@ const config = {
    wsServer: 'wss://o100.odainfra.com/connectors/botconnector/ws',
    botName: 'DemoBot',
    removeAskFeedback: true,
-   hideHotQuestions: true
+   hideHotQuestions: true,
+   hideHint: true
 }
 
 module.exports = config
