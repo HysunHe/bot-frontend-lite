@@ -1,6 +1,6 @@
 import ko from 'knockout'
 import format from 'date-fns/format'
-import axios from 'axios'
+// import axios from 'axios'
 import store from 'store'
 import uuidv4 from 'uuid/v4'
 import botTemplate from '../templates/bot.html'
@@ -61,6 +61,17 @@ class BotViewModel {
       }
     })(now)
 
+    self.settings = {
+      "switch_manual":"Transfer manual / manual / transfer customer service / customer service / manual customer service / manual service",
+      "malicious_user_time":"120",
+      "hint":"You can enter keywords to ask questions, such as \"hello\", you can also choose from the following hot questions.",
+      "issues_number":"2",
+      "welcome_message":"I am demo bot. Can I help you?",
+      "intent_fails_times":"1000",
+      "malicious_user_banned":"199",
+      "switch_manual_times":"1000"
+    };
+    
     ko.bindingHandlers.placeholder = {
       init: function (element, valueAccessor, allBindingsAccessor) {
         var underlyingObservable = valueAccessor();
@@ -70,7 +81,6 @@ class BotViewModel {
 
     self.placeholderText = ko.observable(display.js_message.item_7);
     self.removeAskFeedback = config.removeAskFeedback;
-    self.hideHotQuestions = config.hideHotQuestions;
     self.loading = ko.observable(false)
     self.blocked = ko.observable(false)
     self.askedTimes = ko.observable(0)
@@ -130,27 +140,6 @@ class BotViewModel {
       await self.sendQuestion()
     }
 
-    self.blockUser = async function () {
-      await axios.post(`${config.botGateway}/bot/blacklist`, {
-        user_id: self.userId,
-        user_agent: window.navigator.userAgent
-      })
-      self.blocked(true)
-    }
-
-    self.recordQuestion = async function (question) {
-      self.askedTimes(self.askedTimes() + 1)
-      await axios.post(`${config.botGateway}/bot/questions`, {
-        user_id: self.userId,
-        question: question
-      })
-
-      if (self.askedTimes() >= parseInt(self.settings['malicious_user_banned'])) {
-        await self.blockUser()
-        await self.youAreBlocked()
-      }
-    }
-
     self.sendQuestion = async function () {
       await self.appendQuestion(self.question())
 
@@ -185,7 +174,6 @@ class BotViewModel {
 
       self.sendMessage(self.question());
       console.log("*Question: ", self.question())
-      await self.recordQuestion(self.question())
 
       self.question('')
     }
@@ -246,21 +234,6 @@ class BotViewModel {
       syncScrollDown()
     }
 
-    self.loadTopics = async function (categoryId) {
-      self.loading(true)
-      scrollDown()
-      const topicPromise = axios.get(`${config.botGateway}/bot/categories/${categoryId}/topics`)
-      const [topicResponse] = await Promise.all([topicPromise, sleep(30)])
-      self.loading(false)
-      const message = {
-        type: 'topic-list',
-        timestamp: format(new Date(), 'HH:mm'),
-        topics: topicResponse.data.payload
-      }
-      addToMessageList(message);
-      await deferedScrollDown()
-    }
-
     self.sayHello = async () => {
       self.sayHelloNoWait();
       await deferedScrollDown();
@@ -272,9 +245,6 @@ class BotViewModel {
         timestamp: format(now, 'HH:mm'),
         body: self.settings['hint']
       })
-      if (!self.hideHotQuestions) {
-        addToMessageList(self.trendingMessage);
-      }
     }
 
     self.youAreBlocked = async function () {
@@ -554,29 +524,8 @@ class BotViewModel {
       }
 
       self.loading(true)
-      //const checkPromise = axios.post(`${config.botGateway}/bot/blacklist/check`, { user_id: self.userId })
-      const settingPromise = axios.get(`${config.botGateway}/bot/settings_frontend`)
-      const topicPromise = axios.get(`${config.botGateway}/bot/trendingTopics-light`)
-      const categoryPromise = axios.get(`${config.botGateway}/bot/categories`)
-      //const [checkResponse, settingResponse, topicResponse, categoryResponse] = await Promise.all([checkPromise, settingPromise, topicPromise, categoryPromise, sleep(30)])
-      const [settingResponse, topicResponse, categoryResponse] = await Promise.all([settingPromise, topicPromise, categoryPromise])
-      // if (checkResponse.data === 'BLOCKED') {
-      //   self.blocked(true)
-      //   self.loading(false)
-      //   await self.youAreBlocked()
-      //   return
-      // }
-      self.settings = settingResponse.data.payload
-
       self.initWebSocketIfNeeded();
-
       self.loading(false)
-      self.trendingMessage = {
-        type: 'trending',
-        timestamp: format(new Date(), 'HH:mm'),
-        topics: topicResponse.data.payload,
-        categories: categoryResponse.data.payload
-      }
 
       if (config.max_history_records > 0) {
         loadConversationHistory();
