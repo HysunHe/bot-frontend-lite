@@ -1,6 +1,9 @@
-npx webpack
+# Build and remote deployment.
 
-sudo docker stop frontend-ws
-sudo docker rm frontend-ws
-sudo ./frontend-build.sh
-sudo ./frontend-start.sh
+# Build
+./frontend-build.sh
+
+docker push hysunhe/botfront:ceair
+
+# Remote deployment
+ssh -i /home/hysunhe/projects/BetterBot/credentials/sehub/id_rsa opc@o100.odainfra.com -t "sudo su - oracle -c ./deploy-ceair-frontend.sh"

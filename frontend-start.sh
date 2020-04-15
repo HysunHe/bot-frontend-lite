@@ -2,6 +2,6 @@
 
 docker run -d \
     --restart=always \
-    --name=frontend-ws \
+    --name=ceair-frontend \
     -p 8087:80 \
-    hysunhe/botfront:latest-sehub
+    hysunhe/botfront:ceair
