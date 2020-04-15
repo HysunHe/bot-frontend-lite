@@ -29,7 +29,7 @@ const display ={
   settings: {
     "switch_manual":"Transfer manual / manual / transfer customer service / customer service / manual customer service / manual service",
     "malicious_user_time":"120",
-    "hint":"You can enter keywords to ask questions, such as \"hello\", you can also choose from the following hot questions.",
+    "hint":"您可以问我会员相关的问题，比如 如何升级会员卡、如何在线申请会员卡、如何修改查询密码等。",
     "issues_number":"2",
     "welcome_message":"我是智能客服助手，为您提供常见问题查询服务。",
     "intent_fails_times":"1000",
