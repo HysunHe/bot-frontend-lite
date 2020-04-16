@@ -21,14 +21,14 @@
 
         <!-- ko if: message.type === 'text' -->
         <div class="w-full pl-2 pr-2">
-          <div class="mb-2 p-2 rounded-larger text-sm bg-answer" data-bind="css:{'bubble-left': message.showAvatar, 'bubble-left-no-bubble': !message.showAvatar}, html: message.body"></div>
+          <div class="mb-2 p-2 rounded-larger text-md bg-answer" data-bind="css:{'bubble-left': message.showAvatar, 'bubble-left-no-bubble': !message.showAvatar}, html: message.body"></div>
         </div>
         <!-- /ko -->
 
         <!-- ko if: message.type === 'question' -->
         <div class="w-full pl-2 pr-2 mt-6">
           <div class="flex flex-row-reverse">
-            <div class="mb-6 p-2 rounded-larger text-sm bg-question float-right bubble-right" data-bind="html: message.body"></div>
+            <div class="mb-6 p-2 rounded-larger text-md bg-question float-right bubble-right" data-bind="html: message.body"></div>
           </div>
         </div>
         <div class="w-8 mt-6">
@@ -79,7 +79,7 @@
           </div>
         </div>
         <div class="pl-3">
-          <div class="mb-6 p-3 rounded-larger text-sm text-white bg-question">
+          <div class="mb-6 p-3 rounded-larger text-md text-white bg-question">
             <svg class="fill-current ml-4 mr-4" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="12px" viewBox="0 0 24 12"
               style="enable-background:new 0 0 50 50;" xml:space="preserve">
@@ -114,7 +114,7 @@
       <path d="M17.733928 839.981707C7.369944 837.793755 0 828.734865 0 818.370881 0 459.469955 426.074896 383.083555 524.916595 370.186153L524.916595 205.552348c0-8.099262 4.49106-15.584361 11.745848-19.346103 7.216404-3.838513 15.853057-3.301121 22.570454 1.036398l455.170821 306.466844c5.98808 4.030438 9.596281 10.78622 9.596281 18.309705 0 7.254789-3.608202 14.010571-9.596281 18.156164l-455.017281 306.428459c-6.755782 4.414289-15.430821 4.874911-22.647224 1.113169-7.216404-3.838513-11.630693-11.400382-11.630693-19.422874l0-177.224126c-71.66503 0.537392-130.854894 3.761742-180.256551 9.673052-236.682685 27.982757-299.902988 170.122877-302.589946 176.187727l0 0c-3.569817 8.176032-11.592308 13.434794-20.190576 13.434794C20.651198 840.327173 19.077408 840.250403 17.733928 839.981707z"
         p-id="1039" fill="#ffffff"></path>
     </svg>
-    <div class="text-sm text-white" data-bind="text: display.menu.left_menu_6"></div>
+    <div class="text-md text-white" data-bind="text: display.menu.left_menu_6"></div>
   </a>
   <!-- /ko -->
   
