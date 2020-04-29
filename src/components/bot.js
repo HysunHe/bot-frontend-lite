@@ -41,6 +41,12 @@ function debug(msg) {
   console.log(msg);
 };
 
+function getQueryString(name) {
+  var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+  var r = window.location.search.substr(1).match(reg);
+  if(r!=null)return unescape(r[2]); return null;
+}
+
 class BotViewModel {
   constructor() {
     const self = this
@@ -54,6 +60,7 @@ class BotViewModel {
       }
     };
 
+    self.userId = uuidv4();
     self.placeholderText = ko.observable(display.js_message.item_7);
     self.removeAskFeedback = config.removeAskFeedback;
     self.hideHint = config.hideHint;
@@ -483,12 +490,18 @@ class BotViewModel {
     };
 
     self.initialize = async function () {
-      if (store.get('userId')) {
-        self.userId = store.get('userId')
+      let user = encodeURIComponent(getQueryString("p"));
+      if (!user || /^(\s*|null)$/.test(user)) {
+        debug("! p is not defined !");
+        let tmpU = store.get('userId');
+        if (tmpU && !/^(\s*|null)$/.test(tmpU)) {
+          self.userId = tmpU;
+        }
       } else {
-        self.userId = uuidv4()
-        store.set('userId', self.userId)
+        self.userId = user;
       }
+      store.set('userId', self.userId);
+      debug("* u = " + self.userId);
 
       self.loading(true)
       self.initWebSocketIfNeeded();
