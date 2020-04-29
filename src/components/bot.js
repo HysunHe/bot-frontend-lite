@@ -45,22 +45,6 @@ class BotViewModel {
   constructor() {
     const self = this
     self.display=display
-    const now = new Date()
-    const hello = ((now) => {
-      const currentHour = now.getHours()
-      if (currentHour >= 3 && currentHour < 8) {
-        return display.js_message.item_4
-      } else if (currentHour >= 8 && currentHour < 11) {
-        return display.js_message.item_4
-      } else if (currentHour >= 11 && currentHour < 13) {
-        return display.js_message.item_5
-      } else if (currentHour >= 13 && currentHour < 18) {
-        return display.js_message.item_5
-      } else {
-        return display.js_message.item_6
-      }
-    })(now)
-
     self.settings = display.settings;
     
     ko.bindingHandlers.placeholder = {
@@ -226,12 +210,8 @@ class BotViewModel {
       syncScrollDown()
     }
 
-    self.sayHelloNoWait = () => {
-      addToMessageList({
-        type: 'text',
-        timestamp: format(now, 'HH:mm'),
-        body: self.settings['hint']
-      })
+    self.sayHelloNoWait = async () => {
+      await self.sendMessage(self.settings["hello_message"]);
     }
 
     self.youAreBlocked = async function () {
@@ -285,7 +265,7 @@ class BotViewModel {
       }
       if (self.wsParam["ws"] === null) return;
       self.wsParam["isForceClosed"] = false;
-      self.wsParam["ws"].onopen = function () {
+      self.wsParam["ws"].onopen = async function () {
         self.botInitialized(true);
         self.wsParam["initLck"] = false;
         self.placeholderText(display.js_bot.item_3);
@@ -519,11 +499,6 @@ class BotViewModel {
       }
 
       if (self.operationStack.length === 0) {
-        addToMessageList({
-          type: 'text',
-          timestamp: format(now, 'HH:mm'),
-          body: `${hello}，` + self.settings['welcome_message']
-        });
         self.sayHelloNoWait();
       }
       await deferedScrollDown();

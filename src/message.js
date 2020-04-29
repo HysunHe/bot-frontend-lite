@@ -14,9 +14,6 @@ const display ={
     item_1: "很高兴能帮到您，祝您生活愉快",
     item_2: "获取位置信息失败",
     item_3:"发送失败，浏览器未允许获取位置信息",
-    item_4:"早上好",
-    item_5:"下午好",
-    item_6:"晚上好",
     item_7:"努力加载中" 
   },
   js_bot:{
@@ -34,7 +31,8 @@ const display ={
     "welcome_message":"我是智能客服助手，为您提供常见问题查询服务。",
     "intent_fails_times":"1000",
     "malicious_user_banned":"199",
-    "switch_manual_times":"1000"
+    "switch_manual_times":"1000",
+    "hello_message": "你好"
   }
 }
 
