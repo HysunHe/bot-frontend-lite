@@ -1,11 +1,10 @@
 import ko from 'knockout'
 import format from 'date-fns/format'
 import topicListTemplate from '../templates/topicList.html'
-import display from '../message.js'
+
 class TopicListViewModel {
   constructor(params) {
-    const self = this
-    self.display=display
+    const self = this;
     self.topics = params.message.topics
     self.bot = params.bot
 

@@ -1,12 +1,10 @@
 import ko from 'knockout'
 
 import itemListTemplate from '../templates/itemList.html'
-import display from '../message.js'
 
 class ItemListViewModel {
   constructor(params) {
     const self = this;
-    self.display = display
     self.message = params.message;
     self.items = params.message.items;
     self.bot = params.bot;

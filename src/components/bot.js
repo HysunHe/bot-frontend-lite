@@ -11,7 +11,7 @@ import './answer.js'
 import './attachment.js'
 import config from '../config.js'
 import VConsole from 'vconsole'
-import display from '../message.js'
+
 //if (window.location.search.indexOf('debug=true') >= 0) {
   window.vConsole = new VConsole();
 //}
@@ -49,9 +49,7 @@ function getQueryString(name) {
 
 class BotViewModel {
   constructor() {
-    const self = this
-    self.display=display
-    self.settings = display.settings;
+    const self = this;
     
     ko.bindingHandlers.placeholder = {
       init: function (element, valueAccessor, allBindingsAccessor) {
@@ -61,21 +59,12 @@ class BotViewModel {
     };
 
     self.userId = uuidv4();
-    self.placeholderText = ko.observable(display.js_message.item_7);
+    self.placeholderText = ko.observable(config.static_message.loading_message);
     self.removeAskFeedback = config.removeAskFeedback;
     self.hideHint = config.hideHint;
     self.loading = ko.observable(false)
     self.blocked = ko.observable(false)
-    self.askedTimes = ko.observable(0)
-    self.errorTimes = ko.observable(0)
-    self.forcedToShowTransferButton = ko.observable(false)
-    self.showTransferButton = ko.computed(() => {
-      try {
-        return self.forcedToShowTransferButton() || self.askedTimes() >= parseInt(self.settings['switch_manual_times']) || self.errorTimes() > parseInt(self.settings['intent_fails_times'])
-      } catch (_error) {
-        return false
-      }
-    })
+    self.showTransferButton = ko.observable(false);
     self.operationStack = [];
     let loadConversationHistory = function () {
       let operationStackString = store.get("operationStack_" + config.botName);
@@ -125,28 +114,6 @@ class BotViewModel {
 
     self.sendQuestion = async function () {
       await self.appendQuestion(self.question())
-
-      if (self.blocked()) {
-        await self.youAreBlocked()
-        self.question('')
-        return
-      }
-
-      for (let keyword of self.settings['switch_manual'].split('/')) {
-        if (self.question().includes(keyword.trim())) {
-          self.forcedToShowTransferButton(true)
-
-          const message = {
-            type: 'text',
-            timestamp: format(now, 'HH:mm'),
-            body: display.js_bot.item_1
-          }
-          self.appendMessageNoWait(message)
-
-          self.question('')
-          return
-        }
-      }
 
       self.loading(true)
 
@@ -218,17 +185,7 @@ class BotViewModel {
     }
 
     self.sayHelloNoWait = async () => {
-      await self.sendMessage(self.settings["hello_message"]);
-    }
-
-    self.youAreBlocked = async function () {
-      const message = {
-        type: 'text',
-        timestamp: format(now, 'HH:mm'),
-        body: display.js_bot.item_2
-      }
-      addToMessageList(message);
-      await deferedScrollDown()
+      await self.sendMessage(config.static_message.mainmenu_message);
     }
 
     self.botInitialized = ko.observable(false)
@@ -275,7 +232,7 @@ class BotViewModel {
       self.wsParam["ws"].onopen = async function () {
         self.botInitialized(true);
         self.wsParam["initLck"] = false;
-        self.placeholderText(display.js_bot.item_3);
+        self.placeholderText(config.static_message.askbox_placeholder);
       }
       self.wsParam["ws"].onmessage = function (evt) {
         if (!self.botInitialized()) {
@@ -288,33 +245,22 @@ class BotViewModel {
         }
         let message = resp.body.messagePayload;
         console.log("Message received: ", message);
-        if (message.type === 'text' && message.text === '_SORRY_') {
-          if (self.errorTimes() === 0) {
-            self.appendMessageNoWait({
-              type: 'text',
-              timestamp: format(new Date(), 'HH:mm'),
-              body: display.js_bot.item_4
-            })
+        if (message.type === 'text') {
+          if(message.text.indexOf('Your session') >= 0 
+            && message.text.indexOf('expired') >= 0) {
+              self.sayHelloNoWait();
           } else {
-            self.appendMessageNoWait({
-              type: 'text',
+            let pair = message.text.split('\n\n\n')
+            let answer = pair[pair.length - 1]
+            let qnaMessage = {
+              type: 'answer',
               timestamp: format(new Date(), 'HH:mm'),
-              body: display.js_bot.item_5
-            })
+              body: answer,
+              actions: message.actions,
+              globalActions: message.globalActions
+            }
+            self.appendMessageNoWait(qnaMessage)
           }
-          self.sayHelloNoWait()
-          self.errorTimes(self.errorTimes() + 1)
-        } else if (message.type === 'text') {
-          let pair = message.text.split('\n\n\n')
-          let answer = pair[pair.length - 1]
-          let qnaMessage = {
-            type: 'answer',
-            timestamp: format(new Date(), 'HH:mm'),
-            body: answer,
-            actions: message.actions,
-            globalActions: message.globalActions
-          }
-          self.appendMessageNoWait(qnaMessage)
         } else if (message.type === 'card') {
           let itemListMessage = {
             type: 'item-list',
@@ -490,29 +436,37 @@ class BotViewModel {
     };
 
     self.initialize = async function () {
-      let code = encodeURIComponent(getQueryString('code'));
-      debug("* code = " + code);
-      if (code && !/^(\s*|null)$/.test(code)) {
-        let resp1 = await axios.get(`${config.authnUrl}?qvIdOnly=true&code=${code}`);
-        debug('Got resp1: ' + JSON.stringify(resp1.data));	
-        if(resp1.status === 200) {
-          self.userId = resp1.data.id;
-        }
+      let ceawcoid = store.get('ceawcoid'); // Load openid from Cache first.
+      if (ceawcoid && !/^(\s*|null)$/.test(ceawcoid)) {
+        self.userId = ceawcoid;
+        debug("* got u from store: " + self.userId);
       } else {
-        let user = encodeURIComponent(getQueryString('p'));
-        if (!user || /^(\s*|null)$/.test(user)) {
-          debug("! p is not defined !");
-          let tmpU = store.get('userId');
-          if (tmpU && !/^(\s*|null)$/.test(tmpU)) {
-            self.userId = tmpU;
+        let code = encodeURIComponent(getQueryString('code'));
+        debug("* code = " + code);
+        if (code && !/^(\s*|null)$/.test(code)) {
+          let resp1 = await axios.get(`${config.authnUrl}?qvIdOnly=true&code=${code}`);
+          debug('Got resp1: ' + JSON.stringify(resp1.data));	
+          if(resp1.status === 200) {
+            self.userId = resp1.data.id;
+            store.set("ceawcoid", self.userId); // Cache the openid
           }
         } else {
-          self.userId = user;
+          let user = encodeURIComponent(getQueryString('p'));
+          if (!user || /^(\s*|null)$/.test(user)) {
+            debug("* p is not defined. Try get from Cache. !");
+            let tmpU = store.get('userId');
+            if (tmpU && !/^(\s*|null)$/.test(tmpU)) {
+              self.userId = tmpU;
+              debug("* Got u from Cache. !");
+            }
+          } else {
+            self.userId = user; // Random characters (uuid)
+          }
         }
       }
 
-      self.userId = self.userId.replace('"', '').replace('%22', '');      
-      store.set('userId', self.userId);
+      self.userId = self.userId.replace(/"/g, '').replace(/%22/g, '');      
+      store.set("userId", self.userId);
       debug("* u = " + self.userId);
 
       self.loading(true)

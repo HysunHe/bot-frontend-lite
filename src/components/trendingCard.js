@@ -1,11 +1,10 @@
 import ko from 'knockout'
 import format from 'date-fns/format'
 import trendingCardTemplate from '../templates/trendingCard.html'
-import display from '../message.js'
+
 class TrendingCardViewModel {
   constructor(params) {
-    const self = this
-    self.display=display
+    const self = this;
     self.currentTab = ko.observable('topics')
     self.showTopics = ko.computed(() => {
       return self.currentTab() === 'topics'

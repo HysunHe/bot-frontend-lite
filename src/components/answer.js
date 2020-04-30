@@ -1,13 +1,11 @@
 import ko from 'knockout'
 import format from 'date-fns/format'
 import answerTemplate from '../templates/answer.html'
-import display from '../message.js'
 class AnswerViewModel {
   constructor(params) {
-    const self = this
-    self.display=display
-    self.answer = params.message.body
-    self.bot = params.bot
+    const self = this;
+    self.answer = params.message.body;
+    self.bot = params.bot;
     self.showFeedback = !self.bot.removeAskFeedback;
     self.message = params.message;
     self.items = params.message.actions;
@@ -16,7 +14,7 @@ class AnswerViewModel {
       const message = {
         type: 'text',
         timestamp: format(new Date(), 'HH:mm'),
-        body: display.js_message.itme_1
+        body: "I'm glad to serve you, have a good day!"
       }
       await self.bot.appendMessage(message)
     }
@@ -44,7 +42,7 @@ class AnswerViewModel {
               "longitude": 0,
               "latitude": 0
             }, 'location');
-            alert('Failed to send your location[${display.js_message.item_2}]！');
+            alert('Failed to send your location！');
             console.error('Failed to get geolocation', err);
           }, {
               enableHighAccuracy: true,
@@ -56,7 +54,7 @@ class AnswerViewModel {
             "longitude": 0,
             "latitude": 0
           }, 'location');
-          alert('Location is not supported by your browser[${display.js_message.item_3}]！');
+          alert('Location is not supported by your browser！');
           console.error('Failed to get geolocation', err);
         }
       } else {
