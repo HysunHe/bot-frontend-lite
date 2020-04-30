@@ -492,7 +492,7 @@ class BotViewModel {
     self.initialize = async function () {
       let code = encodeURIComponent(getQueryString("code"));
       debug("* code = " + code);
-      if (code && /^(\s*|null)$/.test(code)) {
+      if (code && !/^(\s*|null)$/.test(code)) {
         let resp1 = await axios.get(`${config.authnUrl}?qvIdOnly=true&code=${code}`);
         debug('Got resp1: ' + JSON.stringify(resp1.data));	
         if(resp1.status === 200) {
