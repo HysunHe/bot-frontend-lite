@@ -1,5 +1,5 @@
 const config = {
-   botGateway: 'https://o100.odainfra.com',
+   authnUrl: 'https://o100.odainfra.com/ceair-connectors/aaa/user',
    wsServer: 'wss://o100.odainfra.com/ceair-connectors/botconnector/ws',
    botName: 'CeairBot',
    removeAskFeedback: true,

@@ -1,6 +1,6 @@
 import ko from 'knockout'
 import format from 'date-fns/format'
-// import axios from 'axios'
+import axios from 'axios'
 import store from 'store'
 import uuidv4 from 'uuid/v4'
 import botTemplate from '../templates/bot.html'
@@ -490,16 +490,27 @@ class BotViewModel {
     };
 
     self.initialize = async function () {
-      let user = encodeURIComponent(getQueryString("p"));
-      if (!user || /^(\s*|null)$/.test(user)) {
-        debug("! p is not defined !");
-        let tmpU = store.get('userId');
-        if (tmpU && !/^(\s*|null)$/.test(tmpU)) {
-          self.userId = tmpU;
+      let code = encodeURIComponent(getQueryString("code"));
+      debug("* code = " + code);
+      if (code && /^(\s*|null)$/.test(code)) {
+        let resp1 = await axios.get(`${config.authnUrl}?qvIdOnly=true&code=${code}`);
+        debug('Got resp1: ' + JSON.stringify(resp1.data));	
+        if(resp1.status === 200) {
+          self.userId = resp1.data.id;
         }
       } else {
-        self.userId = user;
+        let user = encodeURIComponent(getQueryString("p"));
+        if (!user || /^(\s*|null)$/.test(user)) {
+          debug("! p is not defined !");
+          let tmpU = store.get('userId');
+          if (tmpU && !/^(\s*|null)$/.test(tmpU)) {
+            self.userId = tmpU;
+          }
+        } else {
+          self.userId = user;
+        }
       }
+
       store.set('userId', self.userId);
       debug("* u = " + self.userId);
 
