@@ -490,7 +490,7 @@ class BotViewModel {
     };
 
     self.initialize = async function () {
-      let code = encodeURIComponent(getQueryString("code"));
+      let code = encodeURIComponent(getQueryString('code'));
       debug("* code = " + code);
       if (code && !/^(\s*|null)$/.test(code)) {
         let resp1 = await axios.get(`${config.authnUrl}?qvIdOnly=true&code=${code}`);
@@ -499,7 +499,7 @@ class BotViewModel {
           self.userId = resp1.data.id;
         }
       } else {
-        let user = encodeURIComponent(getQueryString("p"));
+        let user = encodeURIComponent(getQueryString('p'));
         if (!user || /^(\s*|null)$/.test(user)) {
           debug("! p is not defined !");
           let tmpU = store.get('userId');
@@ -511,6 +511,7 @@ class BotViewModel {
         }
       }
 
+      self.userId = self.userId.replace('"', '').replace('%22', '');      
       store.set('userId', self.userId);
       debug("* u = " + self.userId);
 
