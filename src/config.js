@@ -1,6 +1,8 @@
 const config = {
-   authnUrl: 'https://o100.odainfra.com/ceair-connectors/aaa/user',
-   wsServer: 'wss://o100.odainfra.com/ceair-connectors/botconnector/ws',
+   //authnUrl: 'https://o100.odainfra.com/ceair-connectors/aaa/user',
+   //wsServer: 'wss://o100.odainfra.com/ceair-connectors/botconnector/ws',
+   authnUrl: 'https://oracle.doitchina.com/ceair-connectors/aaa/user',
+   wsServer: 'wss://oracle.doitchina.com/ceair-connectors/botconnector/ws',
    botName: 'CeairBot',
    removeAskFeedback: true,
    hideHotQuestions: true,
