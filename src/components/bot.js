@@ -12,9 +12,9 @@ import './attachment.js'
 import config from '../config.js'
 import VConsole from 'vconsole'
 
-//if (window.location.search.indexOf('debug=true') >= 0) {
+if (window.location.search.indexOf('debug=true') >= 0) {
   window.vConsole = new VConsole();
-//}
+}
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
